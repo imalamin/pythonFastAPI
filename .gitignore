@@ -1,1 +1,23 @@
-!.py !requirements.txt !.db pycache/ *.py[cod] *.pyo *.pyc *.pyd .venv/ venv/ env/ .vscode/ .idea/ .DS_Store Thumbs.db *.log *.cache .pytest_cache/ .coverage .tox/ *.egg-info/ dist/ build/
+*
+!*.py
+!requirements.txt
+!*.db
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+*.cache
+.pytest_cache/
+.coverage
+.tox/
+*.egg-info/
+dist/
+build/

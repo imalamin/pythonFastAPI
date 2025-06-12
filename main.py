@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, status, Response, HTTPException
 from pydantic import BaseModel
 
 from blog.database import engine, SessionLocal
@@ -54,7 +54,7 @@ async def create_blog(request: Blog):
                     rating: {request.rating}"}
 
     
-@app.post("/blogcreate")
+@app.post("/blogcreate" , status_code=status.HTTP_201_CREATED)
 async def create(request: schema.Blog, db: Session = Depends(get_db)):
     new_blog = models.Blog(
         title=request.title,
@@ -78,6 +78,18 @@ async def get_all_blog_data(db: Session = Depends(get_db)):
     return blog    
 
 @app.get("/createblog/{id}")
-async def get_blog_by_id(id: int, db: Session = Depends(get_db)):
+async def show_blog_by_id(id: int, response: Response,  db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
+    if not blog:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return {"error": f"Blog with {id} not found"}
     return blog
+
+@app.delete("/createblog/{id}")
+async def delete_blog_by_id(id: int, response: Response, db: Session = Depends(get_db)):
+    blog = db.query(models.Blog).filter(models.Blog.id == id).first()
+    if not blog:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Blog with id: {id} not found")    
+    db.delete(blog)
+    db.commit()
+    return {"message": f"Blog with id : {id}deleted successfully"}

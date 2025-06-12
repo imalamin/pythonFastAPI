@@ -1,0 +1,1 @@
+!.py !requirements.txt !.db pycache/ *.py[cod] *.pyo *.pyc *.pyd .venv/ venv/ env/ .vscode/ .idea/ .DS_Store Thumbs.db *.log *.cache .pytest_cache/ .coverage .tox/ *.egg-info/ dist/ build/

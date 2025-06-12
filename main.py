@@ -76,3 +76,8 @@ async def create(request: schema.Blog, db: Session = Depends(get_db)):
 async def get_all_blog_data(db: Session = Depends(get_db)):
     blog = db.query(models.Blog).all()
     return blog    
+
+@app.get("/createblog/{id}")
+async def get_blog_by_id(id: int, db: Session = Depends(get_db)):
+    blog = db.query(models.Blog).filter(models.Blog.id == id).first()
+    return blog

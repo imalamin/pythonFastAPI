@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean
 from blog.database import Base
 
+
 class Blog(Base):
     __tablename__ = "blogs"
     id = Column(Integer, primary_key=True, index=True)

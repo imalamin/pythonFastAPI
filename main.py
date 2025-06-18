@@ -1,13 +1,46 @@
-from typing import Optional
-from fastapi import FastAPI, Header
+# pythonFastAPI/main.py
+
+from typing import Optional, List
+from fastapi import Depends, FastAPI, Header
 from pydantic import BaseModel
 
-from blog.database import engine, SessionLocal
+from book.database.b_database import engine, SessionLocal
 from sqlalchemy.orm import Session
-from blog import schema
-from blog import models
+from book.database import b_schema, b_models
 
 app = FastAPI()
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# Create tables in the database
+# models.metadata.create_all(bind=engine)
+
+
+b_models.Base.metadata.create_all(bind=engine)
+
+
+# ------------------------------- book sqlite --------------
+
+@app.get('/books', response_model=List[b_schema.Book])
+async def get_all_books(db: Session = Depends(get_db)):
+    book_list = db.query(b_models.Book).all()
+    return book_list
+
+
+
+
+
+
+
+
+
+
 
 
 @app.get('/greet')
@@ -21,7 +54,7 @@ class BookCreateModel(BaseModel):
 
 
 @app.post('/create_book')
-async def  create_book(book_data : BookCreateModel):
+async def create_book(book_data: BookCreateModel):
     return {
         "title": book_data.title,
         "author": book_data.author
@@ -30,16 +63,22 @@ async def  create_book(book_data : BookCreateModel):
 
 @app.get('/get_headers', status_code=200)
 async def get_header(
-    accept: str = Header(None),
-    content_type: str = Header(None),
-    user_agent: str = Header(None),
-    host: str = Header(None),
+    accept: str = Header(),
+    content_type: str = Header(),
+    user_agent: str = Header(),
+    host: str = Header()
 ):
     request_headers = {}
-    
+
     request_headers["Accept"] = accept
     request_headers["Content-type"] = content_type
     request_headers["User-Agent"] = user_agent
     request_headers["Host"] = host
-    
-    return request_headers
+
+    return {
+        "accept": accept,
+        "content_type": content_type,
+        "user_agent": user_agent,
+        "host": host
+    }
+
